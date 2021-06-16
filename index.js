@@ -6,7 +6,7 @@ app.use('/api/ruta', Ruta);
 app.get('/api', async (req, res,next) => {
     res.send("RecolecAR API");
   });
-app.listen(3000, () => {
+app.listen(process.env.PORT || 5000, () => {
  console.log("El servidor est� inicializado en el puerto 3000");
 });
 
