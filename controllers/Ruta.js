@@ -1,31 +1,27 @@
 var  polylines  =  require ( '@mapbox/polyline' ) ;
 const Utils_ordenamiento = require('./Ordenamiento');
 const Utils_contenedores = require('./Contenedores');
-var contenedores
-var ubicacionesContenedores=[]
 const api_key= "AIzaSyA7d5VxLP4VRayPEO1IAZP9fveTXy44J_A"
 const url_base = "https://maps.googleapis.com/maps/api/directions/json?key="
 const fetch = require('node-fetch');
-var coordenadasDecodificadas=[]
-var instrucciones=[]
 
 
 async function obtenerRuta(id,inicio,fin){
-    contenedores= await Utils_contenedores.byZone(id)
-    obtenerUbicaciones()
+    var contenedores= await Utils_contenedores.byZone(id)
+    var ubicacionesContenedores = obtenerUbicaciones(contenedores)
     ubicacionesContenedores = await Utils_ordenamiento.devolverOrdenado(inicio,ubicacionesContenedores)
-    var URLS = crearURLS(inicio,fin)
+    var URLS = crearURLS(inicio,fin,ubicacionesContenedores)
     for (let i = 0; i < URLS.length; i++) {
         var response = await hacerRequest(URLS[i])
-        obtenerCoordenadasRuta(response)
+        var auxCoor=obtenerCoordenadasRuta(response)
     }
-    return({"coordenadaDecodificada":coordenadasDecodificadas,
+    return({"coordenadaDecodificada":auxCoor.coordenadas,
             "contenedores": contenedores,
             "ubicacionesContenedores": ubicacionesContenedores,
-            "instrucciones": instrucciones
+            "instrucciones": auxCoor.intruccion
             })
 }
-function crearURLS(inicio,fin){
+function crearURLS(inicio,fin,ubicacionesContenedores){
     var URLS = []
     var auxContenedores = ubicacionesContenedores.slice()
     console.log(auxContenedores.length)
@@ -57,7 +53,6 @@ function crearURLS(inicio,fin){
     }
     return URLS
 }
-//esta funcion recibe un array de coordenadas con formato {00.00,00.00} sin nombre de campo
 function crear1URL(arrayCoordenadas,inicio,fin){
     var URLCompleta = url_base + api_key + "&language=es-419&origin=" 
     + inicio.latitude + "," + inicio.longitude
@@ -70,6 +65,8 @@ function crear1URL(arrayCoordenadas,inicio,fin){
     return URLCompleta
 }
 function obtenerCoordenadasRuta (response){
+    var coordenadasDecodificadas=[]
+    var instrucciones=[]
     var jRoutes =[]
     var jLegs =[]
     var jSteps =[]
@@ -116,18 +113,21 @@ function obtenerCoordenadasRuta (response){
     } catch (error) {
         console.error(error);
     }
+    return {"intruccion":instrucciones,"coordenadas":coordenadasDecodificadas}
 }
 async function hacerRequest (url_Completa){
     var resGet= await fetch(url_Completa)
     return await resGet.json()
 }
-function obtenerUbicaciones (){
+function obtenerUbicaciones (contenedores){
+    var ubicacionesContenedores=[]
     contenedores.forEach(contenedor => {
         ubicacionesContenedores.push({
             "latitude":contenedor.location.coordinates[0],
             "longitude":contenedor.location.coordinates[1]
         })
       });
+    return ubicacionesContenedores
 }
 
 module.exports = {obtenerRuta};

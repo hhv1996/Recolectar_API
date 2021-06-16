@@ -1,20 +1,18 @@
 const { json } = require('express');
 const fetch = require('node-fetch');
-const contenedores = require('./Contenedores');
-var control =0
-var puntoMasCercano = {
-    coordenada:{lat:0.0,lng:0.0},
-    distancia:0,
-    index:1
-}
-var arrayDesordenado 
-var arrayOrdenado = []
+
+
 const api_key= "AIzaSyA7d5VxLP4VRayPEO1IAZP9fveTXy44J_A"
 const url_base = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric"
 
-async function buscarMasCercano (origen){
+async function buscarMasCercano (origen,arrayDesordenado,arrayOrdenado){
   var auxUrl = "&destinations="
   var conAux = 0 //esta variable la uso para restablecer el indice original
+  var puntoMasCercano = {
+    coordenada:{lat:0.0,lng:0.0},
+    distancia:0,
+    index:1
+  }
 
   for (let index = 0; index < arrayDesordenado.length; index++) {
       auxUrl=auxUrl+arrayDesordenado[index].latitude+","+arrayDesordenado[index].longitude+"|"
@@ -55,13 +53,14 @@ async function buscarMasCercano (origen){
 }
 
 async function devolverOrdenado (inicio,ubicaciones){
-  arrayDesordenado=ubicaciones
-  await buscarMasCercano(inicio)
+  var arrayOrdenado = []
+  var arrayDesordenado=ubicaciones
+  await buscarMasCercano(inicio,arrayDesordenado,arrayOrdenado)
   while(arrayDesordenado.length!=0)
   {  
     var ultimoPtoMasCercano = {"latitude":arrayOrdenado[arrayOrdenado.length-1].latitude,
                               "longitude":arrayOrdenado[arrayOrdenado.length-1].longitude}
-    await buscarMasCercano(ultimoPtoMasCercano)
+    await buscarMasCercano(ultimoPtoMasCercano,arrayDesordenado,arrayOrdenado)
     console.log("trabajando")
   }  
   console.log(arrayOrdenado)
@@ -72,4 +71,4 @@ async function hacerRequest (url_Completa){
   var resGet= await fetch(url_Completa)
   return await resGet.json()
 }
-module.exports = {devolverOrdenado,buscarMasCercano};
+module.exports = {devolverOrdenado};
