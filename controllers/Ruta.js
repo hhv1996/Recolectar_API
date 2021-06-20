@@ -9,11 +9,25 @@ const fetch = require('node-fetch');
 async function obtenerRuta(id,inicio,fin){
     var contenedores= await Utils_contenedores.byZone(id)
     var ubicacionesContenedores = obtenerUbicaciones(contenedores)
+    var auxCoor
     ubicacionesContenedores = await Utils_ordenamiento.devolverOrdenado(inicio,ubicacionesContenedores)
     var URLS = crearURLS(inicio,fin,ubicacionesContenedores)
     for (let i = 0; i < URLS.length; i++) {
         var response = await hacerRequest(URLS[i])
-        var auxCoor=obtenerCoordenadasRuta(response)
+        if (i==0) {
+            auxCoor=obtenerCoordenadasRuta(response)
+        }else{
+            var aux = obtenerCoordenadasRuta(response)
+            for (let j = 0; j < aux.intruccion.length; j++) {
+                var element =aux.intruccion[j]
+                auxCoor.intruccion.push(element)
+            }
+            for (let k = 0; k < aux.coordenadas.length; k++) {
+                var element =aux.coordenadas[k]
+                auxCoor.coordenadas.push(element)
+            }
+        }
+        
     }
     return({"coordenadaDecodificada":auxCoor.coordenadas,
             "contenedores": contenedores,
