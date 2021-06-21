@@ -10,6 +10,7 @@ async function obtenerRuta(id,inicio,fin){
     var contenedores= await Utils_contenedores.byZone(id)
     var ubicacionesContenedores = obtenerUbicaciones(contenedores)
     var auxCoor
+    var waypointOrders =[]
     ubicacionesContenedores = await Utils_ordenamiento.devolverOrdenado(inicio,ubicacionesContenedores)
     var URLS = crearURLS(inicio,fin,ubicacionesContenedores)
     for (let i = 0; i < URLS.length; i++) {
@@ -18,6 +19,7 @@ async function obtenerRuta(id,inicio,fin){
             auxCoor=obtenerCoordenadasRuta(response)
         }else{
             var aux = obtenerCoordenadasRuta(response)
+            auxCoor.waypoint_order.push(aux.waypoint_order)
             for (let j = 0; j < aux.intruccion.length; j++) {
                 var element =aux.intruccion[j]
                 auxCoor.intruccion.push(element)
@@ -26,14 +28,14 @@ async function obtenerRuta(id,inicio,fin){
                 var element =aux.coordenadas[k]
                 auxCoor.coordenadas.push(element)
             }
-        }
-        
+        }        
     }
     return({"coordenadaDecodificada":auxCoor.coordenadas,
             "contenedores": contenedores,
             "ubicacionesContenedores": ubicacionesContenedores,
             "instrucciones": auxCoor.intruccion,
-            "kmTotales": auxCoor.kmTotales
+            "kmTotales": auxCoor.kmTotales,
+            "waoypointsOrder": auxCoor.waypoint_order
             })
 }
 function crearURLS(inicio,fin,ubicacionesContenedores){
@@ -83,6 +85,7 @@ function obtenerCoordenadasRuta (response){
     var coordenadasDecodificadas=[]
     var instrucciones=[]
     var kmTotales = 0
+    var waypointsOrder 
     var jRoutes =[]
     var jLegs =[]
     var jSteps =[]
@@ -126,11 +129,12 @@ function obtenerCoordenadasRuta (response){
                 }
                 kmTotales=kmTotales+ jLegs[j].distance.value
             }
+            waypointsOrder = jRoutes[0].waypoint_order
         }
     } catch (error) {
         console.error(error);
     }
-    return {"intruccion":instrucciones,"coordenadas":coordenadasDecodificadas,"kmTotales":kmTotales}
+    return {"intruccion":instrucciones,"coordenadas":coordenadasDecodificadas,"kmTotales":kmTotales,"waypoint_order":waypointsOrder}
 }
 async function hacerRequest (url_Completa){
     var resGet= await fetch(url_Completa)
