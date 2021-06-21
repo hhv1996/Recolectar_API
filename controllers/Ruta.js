@@ -32,7 +32,8 @@ async function obtenerRuta(id,inicio,fin){
     return({"coordenadaDecodificada":auxCoor.coordenadas,
             "contenedores": contenedores,
             "ubicacionesContenedores": ubicacionesContenedores,
-            "instrucciones": auxCoor.intruccion
+            "instrucciones": auxCoor.intruccion,
+            "kmTotales": auxCoor.kmTotales
             })
 }
 function crearURLS(inicio,fin,ubicacionesContenedores){
@@ -81,6 +82,7 @@ function crear1URL(arrayCoordenadas,inicio,fin){
 function obtenerCoordenadasRuta (response){
     var coordenadasDecodificadas=[]
     var instrucciones=[]
+    var kmTotales = 0
     var jRoutes =[]
     var jLegs =[]
     var jSteps =[]
@@ -122,12 +124,13 @@ function obtenerCoordenadasRuta (response){
                         "inclinacionMapa": ""
                     })
                 }
+                kmTotales=kmTotales+ jLegs[j].distance.value
             }
         }
     } catch (error) {
         console.error(error);
     }
-    return {"intruccion":instrucciones,"coordenadas":coordenadasDecodificadas}
+    return {"intruccion":instrucciones,"coordenadas":coordenadasDecodificadas,"kmTotales":kmTotales}
 }
 async function hacerRequest (url_Completa){
     var resGet= await fetch(url_Completa)
