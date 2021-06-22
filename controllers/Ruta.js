@@ -1,7 +1,7 @@
 var  polylines  =  require ( '@mapbox/polyline' ) ;
-const Utils_ordenamiento = require('./Ordenamiento');
+//const Utils_ordenamiento = require('./Ordenamiento');
 const Utils_contenedores = require('./Contenedores');
-const api_key= "AIzaSyA7d5VxLP4VRayPEO1IAZP9fveTXy44J_A"
+const api_key= "AIzaSyAq3eIR9LqZHzoH0F0qUsW2_oAXixVBd2g"
 const url_base = "https://maps.googleapis.com/maps/api/directions/json?key="
 const fetch = require('node-fetch');
 
@@ -10,8 +10,7 @@ async function obtenerRuta(id,inicio,fin){
     var contenedores= await Utils_contenedores.byZone(id)
     var ubicacionesContenedores = obtenerUbicaciones(contenedores)
     var auxCoor
-    var waypointOrders =[]
-    ubicacionesContenedores = await Utils_ordenamiento.devolverOrdenado(inicio,ubicacionesContenedores)
+    //ubicacionesContenedores = await Utils_ordenamiento.devolverOrdenado(inicio,ubicacionesContenedores)
     var URLS = crearURLS(inicio,fin,ubicacionesContenedores)
     for (let i = 0; i < URLS.length; i++) {
         var response = await hacerRequest(URLS[i])

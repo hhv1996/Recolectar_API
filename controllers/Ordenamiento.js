@@ -2,7 +2,7 @@ const { json } = require('express');
 const fetch = require('node-fetch');
 
 
-const api_key= "AIzaSyA7d5VxLP4VRayPEO1IAZP9fveTXy44J_A"
+const api_key= "AIzaSyAq3eIR9LqZHzoH0F0qUsW2_oAXixVBd2g"
 const url_base = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric"
 
 async function buscarMasCercano (origen,arrayDesordenado,arrayOrdenado){
@@ -66,6 +66,7 @@ async function devolverOrdenado (inicio,ubicaciones){
   console.log(arrayOrdenado)
   return arrayOrdenado
 }
+
 
 async function hacerRequest (url_Completa){
   var resGet= await fetch(url_Completa)
