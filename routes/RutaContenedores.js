@@ -4,13 +4,15 @@ var router = express.Router();
 var Contenedor = require('../controllers/Contenedores');
 
 
-router.get('/establecerminimo', async (req, res,next) => {
+router.post('/establecerminimo', async (req, res,next) => {
   var minimo = req.query.minimo
-  res.send(await Contenedor.establecerMinimo(minimo));
+  await Contenedor.establecerMinimo(minimo)
+  res.send("Ok");
 });
 
 router.get('/getminimo', async (req, res,next) => {
-    res.send(await Contenedor.getMinimo());
+    var minimo=await  Contenedor.getMinimo()
+    res.send({umbral_minimo:minimo});
   });
 
 module.exports = router;
