@@ -29,7 +29,8 @@ async function obtenerContenedoresXZonaRecolectables (id,contenedores){
       auxContenedores.push(contenedor)
       console.log(volumenTotalViaje)
     }else{
-      auxContenedoresFueraMinimo.push(contenedor)
+      if (contenedor.fillingLevel>=0.01)
+        auxContenedoresFueraMinimo.push(contenedor)
     }
   });
   auxContenedoresFueraMinimo.forEach(contenedor => {
