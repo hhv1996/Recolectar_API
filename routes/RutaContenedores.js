@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
-
 var Contenedor = require('../controllers/Contenedores');
 
 
-router.post('/establecerminimo', async (req, res,next) => {
-  var minimo = req.query.minimo
+
+
+router.post('/setminimo', async (req, res,next) => {
+  var minimo = req.body.minimo
   await Contenedor.establecerMinimo(minimo)
   res.send("Ok");
 });
