@@ -6,6 +6,15 @@ const url_base = "https://maps.googleapis.com/maps/api/directions/json?key="
 const fetch = require('node-fetch');
 
 
+async function finalizarViaje(inicio,fin){
+    var url="https://maps.googleapis.com/maps/api/directions/json?origin="+inicio.latitude+","+inicio.longitude+"&destination="+fin.latitude+","+fin.longitude+"&key="+api_key
+    var response = await hacerRequest(url)
+    var retorno = obtenerCoordenadasRuta(response)
+     return({"coordenadaDecodificada":retorno.coordenadas,
+             "instrucciones": retorno.intruccion,
+    })
+}
+
 async function obtenerRuta(id,inicio,fin){
     var contenedores= await Utils_contenedores.byZone(id)
     var ubicacionesContenedores = obtenerUbicaciones(contenedores)
@@ -150,4 +159,4 @@ function obtenerUbicaciones (contenedores){
     return ubicacionesContenedores
 }
 
-module.exports = {obtenerRuta};
+module.exports = {obtenerRuta,finalizarViaje};
